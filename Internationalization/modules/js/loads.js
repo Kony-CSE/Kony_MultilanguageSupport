@@ -24,28 +24,43 @@ function getCurrentLocale()
 function getSupportedLocales()
 {
 	var list = kony.i18n.getSupportedLocales();
-	var len = list.length;
-	var filter=new Array();
-		filter[0]="language";
-		filter[1]="country";
-		filter[2]="name";
-	var languageList=" ";		
-		//#ifdef desktopweb
-		frmLocale.lblSupLocale.text="Supported Locales :"+list;
-		frmLocale.lblSupLocale.isVisible=true;	
-		//#else
-		if(len==1)
+	var languageList=" ";
+	//#ifdef bb
+		for(i=0;i<5;i++)
 		{
-			frmLocale.tabPaneContent.lblSupLocale.text="Supported Locales :"+list+".";
-		}else{
-		for(i=0;i<3;i++)
-		{
-			list1=kony.table.get(list,i);
-			languageList=languageList+" "+JSON.stringify(list1, filter, " ")+",";
+			languageList=languageList+"language:"+list[i]["language"]+",name:"+list[i]["name"]+";";
 		}
-		frmLocale.tabPaneContent.lblSupLocale.text="Supported Locales :"+languageList+"...";}
+		frmLocale.tabPaneContent.lblSupLocale.text="Supported Locales :"+"{"+languageList+".. }";
+		frmLocale.tabPaneContent.lblSupLocale.isVisible=true;//Country is not available in case of balckberry.
+	//#else
+	//#endif
+	if(kony.os.deviceInfo().name=="iPhone" || kony.os.deviceInfo().name=="iPad" || kony.os.deviceInfo().name=="android")
+	{	
+		for(i=0;i<5;i++)
+		{
+			languageList=languageList+"language:"+list[i]["language"]+",Country:"+list[i]["country"]+",name:"+list[i]["name"]+"; ";
+		}
+		frmLocale.tabPaneContent.lblSupLocale.text="Supported Locales :"+"{"+languageList+".. }";
 		frmLocale.tabPaneContent.lblSupLocale.isVisible=true;
-		//#endif		
+	}
+	if(kony.os.deviceInfo().name=="WindowsPhone")
+	{	for(i=0;i<5;i++)
+		{
+			languageList=languageList+" "+kony.table.get(list,i)+",";//alert(i);
+		}
+		frmLocale.tabPaneContent.lblSupLocale.text="Supported Locales :"+"{"+languageList+".. }";
+		frmLocale.tabPaneContent.lblSupLocale.isVisible=true;
+	}
+	//#ifdef desktopweb
+		frmLocale.lblSupLocale.text="Supported Locales :"+list+".";
+		frmLocale.lblSupLocale.isVisible=true;
+	//#else
+		if(kony.os.deviceInfo().name=="thinclient")
+		{	
+			frmLocale.tabPaneContent.lblSupLocale.text="Supported Locales :"+"{"+list+"}";
+			frmLocale.tabPaneContent.lblSupLocale.isVisible=true;
+		}
+	//#endif
 }
 /******************************************************************
 *	Name    : getCurrentDeviceLocale
@@ -64,11 +79,14 @@ function getCurrentDeviceLocale()
 	frmLocale.tabPaneContent.lblDevLocale.text="Device Locale :"+JSON.stringify(locale);	
 	//#endif
 }
+
+
 /******************************************************************
 *	Name    : setResourceBundle
 *	Author  : Kony
 *	Purpose : Set the resource bundle for different locales 
-******************************************************************/
+*****************************************************************
+*/
 function setResourceBundle()
 {
 	kony.i18n.setResourceBundle({key1:"us key1",key2:"us key2"}, "en_US");
