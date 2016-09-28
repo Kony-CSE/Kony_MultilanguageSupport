@@ -31,4 +31,4 @@ This Application will showcase the following features of Internationalization
 **Desktop**
  * DesktopWeb
  
-CertifiedAtKonyCommunity
+
